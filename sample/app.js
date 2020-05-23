@@ -1,6 +1,6 @@
 import init from "../client";
-const pubKey = "BFgSA6MlEUEw_cZktV6XYpVp9xLQmBSg9ZdKFG1XKJP-iYr_cPRpnWU0adwwkidn5smWiic7AcwR7U_uRwxHn3I"
-const pvKey  = "3g4YWuXWXFl7PS4ApCaTSgMIvscyOYoBKUfxdSj6qRs";
+const pubKey = "BPfPpLZa6UqsaJBy-k61DXufimrk_YF90v-wzxGw77Q16YIMg3i62VowmgxIIP58-QlBZHzJBxYHq-3El7h7Hps"
+const pvKey  = "_x3M4yesDRDmNeDB-eemxZFCigOJVHnhG1OKxoJ7uCc";
 
 init("./sw.js",pubKey)
 	.then(dt=>console.log(JSON.stringify(dt)));
