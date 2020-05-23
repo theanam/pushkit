@@ -2,5 +2,8 @@
   "name": "notification",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "urlb64touint8array": "^1.0.3"
+  }
 }
