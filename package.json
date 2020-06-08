@@ -7,6 +7,10 @@
     "web-push": "^3.4.4"
   },
   "devDependencies": {
-    "parcel": "^1.12.4"
+    "parcel-bundler": "^1.12.4"
+  },
+  "scripts": {
+    "build-client": "parcel build client/index.js -d client/dist",
+    "watch-client": "parcel watch client/index.js -d client/dist"
   }
 }
