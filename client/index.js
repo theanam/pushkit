@@ -85,6 +85,7 @@ export {
 	handlePushError,
 	requestPushSubscription,
 	getSubStatus,
-	init as default}
+	init as default
+}
 
 
