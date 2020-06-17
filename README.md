@@ -1,4 +1,4 @@
-# A complete toolkit for enabling web push notification in application.
+# A complete toolkit for setting up web push notification.
 
 Mostly independent (still depends on the browser delivery channel) push notification for the web. With server and client side tools in one package.
 
@@ -74,7 +74,7 @@ The last piece of puzzle is to set up a service worker. Now if you are using a b
 
 If you don't have a service worker, create one, if you have one, open it, and import the piece of code required to initiate the service Worker. You can either use it from CDN, or copy the code there. To use the CDN, paste this in the beginning of your service worker: 
 ```js
-importScripts("https://unpkg.com/pushkit@1.1.0/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@1.1.1/worker/binding.js"); 
 ```
 Or paste the below code in the service worker: 
 ```js
