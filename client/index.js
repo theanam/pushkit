@@ -1,91 +1,60 @@
-let ref = {
-	supported: false,
-	subscribed: false,
-	key: null,
-	reg: null,
-	auto: true
+function _log(msg){
+	console.log(msg);
 }
-
 function toUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding)
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
-
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  return outputArray;
+	const padding     = '='.repeat((4 - base64String.length % 4) % 4);
+	const base64      = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+	const rawData     = window.atob(base64);
+	const outputArray = new Uint8Array(rawData.length);
+	for (let i = 0; i < rawData.length; ++i) {
+	  outputArray[i] = rawData.charCodeAt(i);
+	}
+	return outputArray;
 }
-
-function checkSW(){
-	if(!ref.reg) throw new Error("Service worker registration not complete"); 
-}
-function requestPushSubscription(){ 
+function getSubStatus(reg){
 	return new Promise((resolve,reject)=>{
-		checkSW();
-		let applicationServerKey = toUint8Array(ref.key);
-		ref.reg.pushManager.subscribe({
-			userVisibleOnly: true,
-			applicationServerKey
-		}).then(sub=>{
-			resolve(sub);
-		}).catch(reject);
-	})
-}
-function getSubStatus(){
-	return new Promise((resolve,reject)=>{
-		checkSW();
-		ref.reg.pushManager.getSubscription()
+		reg.pushManager.getSubscription()
 			.then(sub=>{
-				if(sub === null){
-					console.log("User not subscribed");
-					if(!ref.auto) return reject(false);
-					return requestPushSubscription();
-				}
-				else{
-					ref.supported = true;
-					console.log("User subscribed");
-					return resolve(sub);
-				}
+				if(sub === null) return reject(null);
+				else return resolve(sub);
 			})
 			.catch(reject);	
 	})
-	
 }
-function handlePushRegistration(reg){
-	if(!reg || !reg.pushManager) throw new Error(`Please call this function as a callback
-	 of the service worker 
-	 registration. or call it with the service worker registration object`);
-	ref.reg = reg;
-	return getSubStatus();
+function requestPushSubscription(reg,key){ 
+	return new Promise((resolve,reject)=>{
+		let applicationServerKey = toUint8Array(key);
+		reg.pushManager.subscribe({
+			userVisibleOnly: true,
+			applicationServerKey
+		}).then(resolve).catch(reject);
+	})
 }
-
-function handlePushError(err){
-	console.log("Error initiating push notification. The following error occured:");
-	console.error(err);
-}
-function init(sw,publicKey,auto = true){
-	if(!sw) throw new Error("Must supply a service worker");
+export default function PushKit(publicKey, verbose = false){
 	if(!publicKey || typeof publicKey !== "string") throw new Error("Public key must be a valid VAPT key");
-	if (!('serviceWorker' in navigator) || !('PushManager' in window)){
-		return console.log("Service worker or push manager not supported");
+	this.supported  = true;
+	this.subscribed = false;
+	this.key        = publicKey;
+	this.reg        = null;
+	this.sub        = null;
+	if (!('serviceWorker' in navigator) || !('PushManager' in window)) this.supported = false;	
+	this.handleRegistration = (reg) =>{
+		if(this.supported === false) return console.error("Service Worker not supported");
+		if(!reg) throw new Error("Service worker registration object required as argument");
+		this.reg = reg;
+		getSubStatus(this.reg).then(sub=>{
+			this.sub        = sub;
+			this.subscribed = true;
+			if(verbose) _log("Already Push Subscribed");
+		}).catch(e=>{
+			if(verbose) _log(e);
+			requestPushSubscription(this.reg,this.key).then(sub=>{
+				this.sub        = sub;
+				this.subscribed = true;
+				if(verbose) _log("Freshly Push Subscribed");
+			}).catch(e=>{
+				if(verbose) _log(e);
+			})
+		})
 	}
-	ref.supported = true;
-	ref.key       = publicKey;
-	ref.auto      = auto;
-	return navigator.serviceWorker.register(sw).then(handlePushRegistration).catch(handlePushError);
 }
-
-export {
-	handlePushRegistration,
-	handlePushError,
-	requestPushSubscription,
-	getSubStatus,
-	init as default
-}
-
-

@@ -1,5 +1,16 @@
 {
-  "name": "notification",
+  "name": "pushkit",
+  "keywords": [
+    "push",
+    "notification",
+    "pushnotification",
+    "web push",
+    "self hosted push"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:theanam/pushkit.git"
+  },
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -11,6 +22,6 @@
   },
   "scripts": {
     "build-client": "parcel build client/index.js -d client/dist",
-    "watch-client": "parcel watch client/index.js -d client/dist"
+    "start-example": "parcel sample/index.html -d example-temp"
   }
 }
