@@ -1,13 +1,17 @@
-self.addEventListener('push', function(event) {
-  console.log('[Service Worker] Push Received.');
-  console.log(`[Service Worker] Push had this data: "${event.data.text()}"`);
-
-  const title = 'Push Codelab';
-  const options = {
-    body: 'Yay it works.',
-    icon: 'images/icon.png',
-    badge: 'images/badge.png'
-  };
-
-  event.waitUntil(self.registration.showNotification(title, options));
+function attachPushKit(scope,config,verbose){
+  var title   = config.title || "PushKit";
+  var icon    = config.icon  || "";
+  var badge   = config.badge || "";
+  scope.addEventListener("push", function(event) {
+      if(verbose) console.log("Push notification received");
+      const options = {
+        body  : event.data.text(),
+        icon  : icon,
+        badge : badge
+      };
+      event.waitUntil(scope.registration.showNotification(title, options));
+    });
+}
+attachPushKit(self,{
+  title: "Anam Ahmed"
 });

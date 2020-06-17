@@ -1,6 +1,6 @@
 import PushKit from "../client";
-const pubKey = "BPfPpLZa6UqsaJBy-k61DXufimrk_YF90v-wzxGw77Q16YIMg3i62VowmgxIIP58-QlBZHzJBxYHq-3El7h7Hps"
-const pvKey  = "_x3M4yesDRDmNeDB-eemxZFCigOJVHnhG1OKxoJ7uCc";
+const pubKey = "BK83EbzbKBq5ok1lFeLLeNIDLIqK8rLpVfXxvkyxzavwtMxZs20VNdqnvC7GZgUFpDYd9hGFX297FNL62KqtfeA"
+const pvKey  = "3fo8fS5kw2mZnXHZ5ZuGHzPh8_eyClligVOHsL3FhwI";
 let _pkit    = new PushKit(pubKey, true);
 window._pkit = _pkit;
 navigator.serviceWorker.register("./sw.js")
