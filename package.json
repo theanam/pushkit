@@ -1,6 +1,6 @@
 {
   "name": "pushkit",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "keywords": [
     "push",
     "notification",
@@ -21,7 +21,6 @@
     "parcel-bundler": "^1.12.4"
   },
   "scripts": {
-    "build-client": "parcel build client/index.js -d client/dist",
-    "start-example": "parcel sample/index.html -d example-temp"
+    "build-client": "parcel build client/index.js -d client/dist"
   }
 }
