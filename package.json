@@ -1,5 +1,6 @@
 {
   "name": "pushkit",
+  "version": "1.0.1",
   "keywords": [
     "push",
     "notification",
@@ -11,7 +12,6 @@
     "type": "git",
     "url": "git@github.com:theanam/pushkit.git"
   },
-  "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "dependencies": {

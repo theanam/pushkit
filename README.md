@@ -2,9 +2,9 @@
 
 Mostly independent (still depends on the browser delivery channel) push notification for the web. 
 
-## How to use
+## Installation
 
-You can use this version if you do some hard work of reading through the source code in the project. I'm already working on proper documentation
+
 
 ## How to develop
 

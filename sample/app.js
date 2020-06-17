@@ -4,5 +4,9 @@ const pvKey  = "3fo8fS5kw2mZnXHZ5ZuGHzPh8_eyClligVOHsL3FhwI";
 let _pkit    = new PushKit(pubKey, true);
 window._pkit = _pkit;
 navigator.serviceWorker.register("./sw.js")
-	.then(_pkit.handleRegistration)
+	.then(reg=>{
+		_pkit.handleRegistration(reg).then(reg=>{
+			console.log(reg);
+		});
+	})
 	.catch(e=>console.log(e));

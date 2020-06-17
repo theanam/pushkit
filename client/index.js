@@ -1,6 +1,4 @@
-function _log(msg){
-	console.log(msg);
-}
+const _log = (msg) => console.log(msg);
 function toUint8Array(base64String) {
 	const padding     = '='.repeat((4 - base64String.length % 4) % 4);
 	const base64      = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
@@ -39,21 +37,26 @@ export default function PushKit(publicKey, verbose = false){
 	this.sub        = null;
 	if (!('serviceWorker' in navigator) || !('PushManager' in window)) this.supported = false;	
 	this.handleRegistration = (reg) =>{
-		if(this.supported === false) return console.error("Service Worker not supported");
 		if(!reg) throw new Error("Service worker registration object required as argument");
-		this.reg = reg;
-		getSubStatus(this.reg).then(sub=>{
-			this.sub        = sub;
-			this.subscribed = true;
-			if(verbose) _log("Already Push Subscribed");
-		}).catch(e=>{
-			if(verbose) _log(e);
-			requestPushSubscription(this.reg,this.key).then(sub=>{
+		return new Promise(resolve=>{
+			if(this.supported === false) return resolve(null);
+			this.reg = reg;
+			getSubStatus(this.reg).then(sub=>{
 				this.sub        = sub;
 				this.subscribed = true;
-				if(verbose) _log("Freshly Push Subscribed");
+				if(verbose) _log("Already Push Subscribed");
+				return resolve(this.sub);
 			}).catch(e=>{
 				if(verbose) _log(e);
+				requestPushSubscription(this.reg,this.key).then(sub=>{
+					this.sub        = sub;
+					this.subscribed = true;
+					if(verbose) _log("Freshly Push Subscribed");
+					return resolve(this.sub);
+				}).catch(e=>{
+					if(verbose) _log(e);
+					return resolve(null);
+				})
 			})
 		})
 	}
