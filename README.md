@@ -1,14 +1,16 @@
-# A complete toolkit for setting up web push notification.
+# A complete toolkit for setting up independent Web Push notification.
 
-Mostly independent (still depends on the browser delivery channel) push notification for the web. With server and client side tools in one package.
+Everything you need to enable [Web Push notification](https://developer.mozilla.org/en-US/docs/Web/API/Push_API) in your Node.JS web application or Progressive web application, without any third-party service.
 
 ## Installation
-This one package contains both the client and server side code packaged in their own module loading format. To install the package run this:
+This package contains both the client and server tools packaged in their own module loading format. To install the package run this:
 ```shell
 yarn add pushkit
 ```
-## Setting Up: 
+### Generate your VAPID keys first: 
 Before starting the setup, you need to create own own VAPID key pair. This is extremely easy to do. You can go to [this site](https://web-push-codelab.glitch.me/) and generate them online. Or you can generate them from Command line using [this tool](https://www.npmjs.com/package/web-push)
+
+Once you have your VAPID key pair (Public and Private key), you can use them to setup your web push implementation. 
 
 ### Client Setup: 
 Once you have installed the package, you can use it like this: 
@@ -21,16 +23,18 @@ let pkInstance = new PushKit("PUBLIC_VAPID_KEY", true);
 navigator.serviceWorker.register("./sw.js").then(swreg=>{
     // start push registration after service worker registration
     pkInstance.handleRegistration(swreg).then(pushreg=>{
-        let regData = JSON.stringify(pushreg);
         // Once push registration is done
         // Send the registration data to the server
-        fetch("/reg",{
-            method :"POST",
-            body :regData,
-            headers: {
+        // You can implement this part in your convenient way
+        // The below example uses `fetch` API to do it.
+        let regData = JSON.stringify(pushreg);
+        fetch("/reg", {
+            method  : "POST",
+            body    : regData,
+            headers : {
                 "content-type":"application/json"
             }
-        })
+        });
     })
 ```
 The above code creates a `PushKit` Instance, The constructor takes two arguments, The first argument is required. The second argument is false by default, setting it true will generate console logs.
@@ -74,9 +78,9 @@ The last piece of puzzle is to set up a service worker. Now if you are using a b
 
 If you don't have a service worker, create one, if you have one, open it, and import the piece of code required to initiate the service Worker. You can either use it from CDN, or copy the code there. To use the CDN, paste this in the beginning of your service worker: 
 ```js
-importScripts("https://unpkg.com/pushkit@1.1.1/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@1.1.2/worker/binding.js"); 
 ```
-Or paste the below code in the service worker: 
+##### *Or* paste the below code in the service worker: 
 ```js
 function attachPushKit(scope,config,verbose){
     var title   = config.title || "PushKit";
@@ -105,7 +109,7 @@ attachPushKit(self, pushOptions);
 This should be enough to enable web push notification in your application.
 
 **** 
-Please feel free to contribute.
+This tool is released under the MIT License. Feel free to contribute.
 
 
 Made with 💙 and JavaScript

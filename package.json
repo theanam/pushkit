@@ -1,6 +1,6 @@
 {
   "name": "pushkit",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "keywords": [
     "push",
     "notification",
@@ -8,7 +8,9 @@
     "web push",
     "self hosted push",
     "web-push",
-    "service worker"
+    "service worker",
+    "pwa",
+    "progressive web app"
   ],
   "repository": {
     "type": "git",
