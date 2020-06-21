@@ -39,14 +39,6 @@ navigator.serviceWorker.register("./sw.js").then(swreg=>{
 ```
 The above code creates a `PushKit` Instance, The constructor takes two arguments, The first argument is required. The second argument is false by default, setting it true will generate console logs.
 
-*If you are not using a module bundler, you can manually add the script tag in your HTML file like this:*
-
-```html
-<script src="https://unpkg.com/pushkit@2.0.1/client/dist/index.js"></script>
-```
-> If you chose to include the JavaScript file in your HTML, instead of calling `new PushKit()` you have to call `new pushKit.PushKit()`. Every other frontend API will be the same
-
-
 ```js
 let _pk = new PushKit("<PUBLIC_VAPID_KEY>", [verbose = false]);
 ```
@@ -59,6 +51,15 @@ pushKitInstance.handleRegistration(ServiceWorkerRegistration)
 this also returns a promise that resolves either with a `null` if the user denies, or push is not supported or there's any error. Or the push registration.
 
 The registration object is different for every user and every browser. You have to send this registration object to the server and store it there for that user. In the example, `fetch` was used to do it. This registration object will be used to send push notification to that user.
+
+#### Using from a CDN:
+*If you are not using a module bundler, or you'd like to use a CDN for the frontend part instead, you can manually add the script tag in your HTML file like this:*
+
+```html
+<script src="https://unpkg.com/pushkit@2.0.1/client/dist/index.js"></script>
+```
+> If you chose to include the JavaScript file in your HTML, instead of calling `new PushKit()` you have to call `new pushKit.PushKit()`. Every other frontend API are the same.
+
 
 ### Server Setup
 To set up the server, install the `pushkit` package on the server as well and then it can be imported like this:
