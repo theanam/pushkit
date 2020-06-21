@@ -1,6 +1,6 @@
 {
   "name": "pushkit",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "keywords": [
     "push",
     "notification",
@@ -22,9 +22,14 @@
     "web-push": "^3.4.4"
   },
   "devDependencies": {
-    "parcel-bundler": "^1.12.4"
+    "clipboard": "^2.0.6",
+    "parcel-bundler": "^1.12.4",
+    "sass": "^1.26.8"
   },
   "scripts": {
-    "build-client": "parcel build client/index.js -d client/dist --global pushKit"
+    "build-client": "parcel build client/index.js -d client/dist --global pushKit",
+    "publish-page": "yarn build-example && npx gh-pages -d dist-example && rm -rf dist-example",
+    "run-example": "mkdir -p temp-example && cp example/sw.js temp-example/ && parcel example/index.html -d temp-example",
+    "build-example": "parcel build example/index.html -d dist-example --public-url /pushkit && cp example/sw.js dist-example"
   }
 }

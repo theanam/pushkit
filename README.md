@@ -1,6 +1,10 @@
 # A complete toolkit for setting up independent Web Push notification.
 
-Everything you need to enable [Web Push notification](https://developer.mozilla.org/en-US/docs/Web/API/Push_API) in your Node.JS web application or Progressive web application, without any third-party service.
+Everything you need to enable Web Push Notification in your Node.JS web application or Progressive web application, without any third-party service.
+
+## 🌍[Check the client example](https://theanan.github.io/pushkit)
+
+## 🚀[Check the server example](https://pushkit.herokuapp.com/)
 
 ## Installation
 This package contains both the client and server tools packaged in their own module loading format. To install the package run this:
@@ -56,7 +60,7 @@ The registration object is different for every user and every browser. You have 
 *If you are not using a module bundler, or you'd like to use a CDN for the frontend part instead, you can manually add the script tag in your HTML file like this:*
 
 ```html
-<script src="https://unpkg.com/pushkit@2.0.1/client/dist/index.js"></script>
+<script src="https://unpkg.com/pushkit@2.0.2/client/dist/index.js"></script>
 ```
 > If you chose to include the JavaScript file in your HTML, instead of calling `new PushKit()` you have to call `new pushKit.PushKit()`. Every other frontend API are the same.
 
