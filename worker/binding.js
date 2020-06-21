@@ -22,7 +22,7 @@ function attachPushKit(scope,config,verbose){
             clients.matchAll({ includeUncontrolled: true, type: 'window' }).then( windowClients => {
                 for (var i = 0; i < windowClients.length; i++) {
                     var client = windowClients[i];
-                    if (client.url === config.url && 'focus' in client) {
+                    if (client.url.match(config.url) && 'focus' in client) {
                         return client.focus();
                     }
                 }
