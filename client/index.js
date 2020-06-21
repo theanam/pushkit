@@ -1,3 +1,4 @@
+/// <reference types="./index" />
 const _log = (msg) => console.log(msg);
 function toUint8Array(base64String) {
 	const padding     = '='.repeat((4 - base64String.length % 4) % 4);
@@ -28,6 +29,9 @@ function requestPushSubscription(reg,key){
 		}).then(resolve).catch(reject);
 	})
 }
+/**
+ * @type {import('./index')}
+ */
 export default function PushKit(publicKey, verbose = false){
 	if(!publicKey || typeof publicKey !== "string") throw new Error("Public key must be a valid VAPT key");
 	this.supported  = true;
