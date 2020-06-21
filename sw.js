@@ -1,4 +1,4 @@
-importScripts("https://unpkg.com/pushkit@2.0.7/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@2.0.8/worker/binding.js"); 
 var pushOptions = {
     title : "Pushkit Sample",
     icon  : "/pushkit/pushkit.png",
