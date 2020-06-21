@@ -1,3 +1,7 @@
+/// <reference types="./binding" />
+/**
+ * @type {import('./binding')}
+ */
 function attachPushKit(scope,config,verbose){
     var title   = config.title || "PushKit";
     var icon    = config.icon  || "";
