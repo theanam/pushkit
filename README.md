@@ -42,9 +42,9 @@ The above code creates a `PushKit` Instance, The constructor takes two arguments
 *If you are not using a module bundler, you can manually add the script tag in your HTML file like this:*
 
 ```html
-<script src="https://unpkg.com/pushkit@2.0.0/client/dist/index.js"></script>
+<script src="https://unpkg.com/pushkit@2.0.1/client/dist/index.js"></script>
 ```
-> If you chose to include the JavaScript file in your HTML, instead of calling `new PushKit()` you have to call `new PushKit.PushKit()`.
+> If you chose to include the JavaScript file in your HTML, instead of calling `new PushKit()` you have to call `new pushKit.PushKit()`. Every other frontend API will be the same
 
 
 ```js
@@ -86,7 +86,7 @@ The last piece of puzzle is to set up a service worker. Now if you are using a b
 
 If you don't have a service worker, create one, if you have one, open it, and import the piece of code required to initiate the service Worker. You can either use it from CDN, or copy the code there. To use the CDN, paste this in the beginning of your service worker: 
 ```js
-importScripts("https://unpkg.com/pushkit@2.0.0/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@2.0.1/worker/binding.js"); 
 ```
 ##### *Or* paste the below code in the service worker: 
 ```js
