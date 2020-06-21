@@ -78,7 +78,7 @@ The last piece of puzzle is to set up a service worker. Now if you are using a b
 
 If you don't have a service worker, create one, if you have one, open it, and import the piece of code required to initiate the service Worker. You can either use it from CDN, or copy the code there. To use the CDN, paste this in the beginning of your service worker: 
 ```js
-importScripts("https://unpkg.com/pushkit@1.1.2/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@1.1.3/worker/binding.js"); 
 ```
 ##### *Or* paste the below code in the service worker: 
 ```js
