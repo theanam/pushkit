@@ -1,8 +1,8 @@
-/// <reference types="./index" />
+/// <reference types="./server" />
 const webPush  = require("web-push");
 
 /**
- * @type {import('./index')}
+ * @type {import('./server')}
  */
 module.exports = function createSender({publicKey,privateKey},email){
     webPush.setVapidDetails(`mailto:${email}`, publicKey, privateKey);

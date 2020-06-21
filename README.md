@@ -16,7 +16,7 @@ Once you have your VAPID key pair (Public and Private key), you can use them to 
 Once you have installed the package, you can use it like this: 
 
 ```js
-import PushKit from "pushkit/client";
+import {PushKit} from "pushkit/client";
 // create an instance
 let pkInstance = new PushKit("PUBLIC_VAPID_KEY", true);
 // register service worker
@@ -38,6 +38,14 @@ navigator.serviceWorker.register("./sw.js").then(swreg=>{
     })
 ```
 The above code creates a `PushKit` Instance, The constructor takes two arguments, The first argument is required. The second argument is false by default, setting it true will generate console logs.
+
+*If you are not using a module bundler, you can manually add the script tag in your HTML file like this:*
+
+```html
+<script src="https://unpkg.com/pushkit@2.0.0/client/dist/index.js"></script>
+```
+> If you chose to include the JavaScript file in your HTML, instead of calling `new PushKit()` you have to call `new PushKit.PushKit()`.
+
 
 ```js
 let _pk = new PushKit("<PUBLIC_VAPID_KEY>", [verbose = false]);
@@ -78,7 +86,7 @@ The last piece of puzzle is to set up a service worker. Now if you are using a b
 
 If you don't have a service worker, create one, if you have one, open it, and import the piece of code required to initiate the service Worker. You can either use it from CDN, or copy the code there. To use the CDN, paste this in the beginning of your service worker: 
 ```js
-importScripts("https://unpkg.com/pushkit@1.1.3/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@2.0.0/worker/binding.js"); 
 ```
 ##### *Or* paste the below code in the service worker: 
 ```js
