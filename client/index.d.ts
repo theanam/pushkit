@@ -1,6 +1,12 @@
 export as namespace PushKitClient;
 
-interface PushKitClientInstance {
+export = {PushKit};
+
+declare class PushKit {
+  constructor(
+    publickKey: string,
+    verbose?: boolean
+  );
   supported: boolean;
   subscribed: boolean;
   key: string;
@@ -10,10 +16,3 @@ interface PushKitClientInstance {
     reg: ServiceWorkerRegistration
   ): Promise<PushSubscription | null>;
 }
-
-export = PushKit;
-
-declare function PushKit(
-  publickKey: string,
-  verbose?: boolean
-): PushKitClientInstance;
