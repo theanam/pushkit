@@ -61,7 +61,7 @@ The registration object is **different for every user and every browser**. You h
 *If you are not using a module bundler, or you'd like to use a CDN for the frontend part instead, you can manually add the script tag in your HTML file like this:*
 
 ```html
-<script src="https://unpkg.com/pushkit@3.0.8/client/dist/index.js"></script>
+<script src="https://unpkg.com/pushkit@3.0.1/client/dist/index.js"></script>
 ```
 > If you chose to include the JavaScript file in your HTML, instead of calling `new PushKit()` you have to call `new pushKit.PushKit()`. Every other frontend API are the same.
 
@@ -119,7 +119,7 @@ The last piece of puzzle is to set up a service worker. Now if you are using a b
 
 If you don't have a service worker, create one, if you have one, open it, and import the piece of code required to initiate the service Worker. You can either use it from CDN, or download the `worker/binding.js` file from the repository and import it. 
 ```js
-importScripts("https://unpkg.com/pushkit@3.0.0/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@3.0.1/worker/binding.js"); 
 ```
 Then you can attach the pushkit listeners with your service worker like this:
 ```js

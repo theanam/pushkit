@@ -1,6 +1,6 @@
 {
   "name": "pushkit",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "keywords": [
     "push",
     "notification",
@@ -12,6 +12,7 @@
     "pwa",
     "progressive web app"
   ],
+  "homepage": "https://theanam.github.io/pushkit",
   "repository": {
     "type": "git",
     "url": "git@github.com:theanam/pushkit.git"
