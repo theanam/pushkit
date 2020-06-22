@@ -1,6 +1,6 @@
 # A complete toolkit for setting up independent Web Push notification.
 
-Everything you need to enable Web Push Notification in your Node.JS web application or Progressive web application, without any third-party service (except for the browser's own channels). 
+Everything you need to enable Web Push Notification in your Node.JS web application. Uses the browser's delivery channel to send push notification(Free of cost), which means no extra third-party service (except for the browser's own delivery channel). Works with Progressive Web Apps (PWA). 
 
 ## 🌍[Check the client example](https://theanam.github.io/pushkit)
 
@@ -18,7 +18,7 @@ yarn add pushkit
 ```
 
 ## Client Setup: 
-Once you have installed the package, you can use it like this: 
+Pushkit works with the Service Worker API. It's journey starts when the service worker gets registered. Below is an example code that sets up pushkit with the service worker registration and sends the Push Registration information (URL and key to send push notification payload) to the server using the fetch API. You can use it like this, or use a different method to preserve the Push Registration object. (Which is Serializable). Once a browser generates this, it can be used to send push notification to that browser.
 
 ```js
 import {PushKit} from "pushkit/client";
@@ -61,7 +61,7 @@ The registration object is **different for every user and every browser**. You h
 *If you are not using a module bundler, or you'd like to use a CDN for the frontend part instead, you can manually add the script tag in your HTML file like this:*
 
 ```html
-<script src="https://unpkg.com/pushkit@3.0.1/client/dist/index.js"></script>
+<script src="https://unpkg.com/pushkit@3.0.2/client/dist/index.js"></script>
 ```
 > If you chose to include the JavaScript file in your HTML, instead of calling `new PushKit()` you have to call `new pushKit.PushKit()`. Every other frontend API are the same.
 
@@ -119,15 +119,16 @@ The last piece of puzzle is to set up a service worker. Now if you are using a b
 
 If you don't have a service worker, create one, if you have one, open it, and import the piece of code required to initiate the service Worker. You can either use it from CDN, or download the `worker/binding.js` file from the repository and import it. 
 ```js
-importScripts("https://unpkg.com/pushkit@3.0.1/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@3.0.2/worker/binding.js"); 
 ```
 Then you can attach the pushkit listeners with your service worker like this:
 ```js
 attachPushKit(self, pushConfig, [defaultTitle = "", defaultURL = "", verbose = false]);
 ```
-Sample Use: 
+Sample Use in service worker: 
 
 ```js
+importScripts("https://unpkg.com/pushkit@3.0.2/worker/binding.js"); 
 var pushConfig = {
     icon  : "ICON_URL",
     badge : "BADGE_URL"
