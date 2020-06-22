@@ -1,8 +1,6 @@
-importScripts("https://unpkg.com/pushkit@2.0.8/worker/binding.js"); 
-var pushOptions = {
-    title : "Pushkit Sample",
-    icon  : "/pushkit/pushkit.png",
-    badge : "/pushkit/pushkit.png",
-    url   : "https://theanam.github.io/pushkit"
+importScripts("binding.js"); 
+var pushConfig = {
+    icon  : "https://theanam.github.io/pushkit/pushkit.png",
+    badge : "https://theanam.github.io/pushkit/pushkit.png"
 }
-attachPushKit(self, pushOptions);
+attachPushKit(self, pushConfig,"Pushkit","http://localhost:1234",true);
