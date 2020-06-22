@@ -12,8 +12,10 @@ interface PushKitClientInstance {
 }
 
 export = {PushKit};
-
-declare function PushKit(
-  publickKey: string,
-  verbose?: boolean
-): PushKitClientInstance;
+// https://github.com/theanam/pushkit/pull/2
+declare class PushKit {
+  constructor(
+    publickKey: string,
+    verbose?: bolean
+  );
+}

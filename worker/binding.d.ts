@@ -4,13 +4,22 @@ export = attachPushKit;
 
 declare function attachPushKit(
   scope: ServiceWorker,
-  config: WorkerConfig,
+  config?: PushOption,
+  defaultTitle?: String,
+  defaultURL?: String,
   verbose?: boolean
 ): void;
 
-interface WorkerConfig {
-  title?: String;
-  icon?: String;
-  badge?: String;
-  url?: String;
+interface PushOption{
+  data?: Any,
+  badge?: String,
+  icon?: String,
+  image?: String,
+  lang?: String,
+  renotify?: Boolean,
+  requireInteraction?: Boolean,
+  silent?: Boolean,
+  tag?: String,
+  timestamp?: Number,
+  vibrate?:[Number]
 }

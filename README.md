@@ -60,7 +60,7 @@ The registration object is different for every user and every browser. You have 
 *If you are not using a module bundler, or you'd like to use a CDN for the frontend part instead, you can manually add the script tag in your HTML file like this:*
 
 ```html
-<script src="https://unpkg.com/pushkit@2.0.8/client/dist/index.js"></script>
+<script src="https://unpkg.com/pushkit@3.0.8/client/dist/index.js"></script>
 ```
 > If you chose to include the JavaScript file in your HTML, instead of calling `new PushKit()` you have to call `new pushKit.PushKit()`. Every other frontend API are the same.
 
@@ -76,70 +76,67 @@ let sender     = createSender({
 },"your@email.address");
 ```
 The Email Address is requred for web push API. Once instance of sender is enough for one set of vapid key (one application).
-
-Now when you need to send Push notification, Just use the `send` method of the
-`sender` like this:
-
-```js
-// Make sure the parse the pushRegistrationObject from JSON string
-sender.send(pushRegistrationObject,"hello world. this is a push message");
+### Sending Push Notification `sender.send`:
+ ```js
+ sender.send(pushRegistrationObject, title, [options]);
 ```
+```js
+let options = {
+    body: "Street dogs don't want anything more than love and shelter."
+}
+// Here, the `pushRegistrationObject` is the object sent from the client that was stored on the server.
+// Make sure to parse the pushRegistrationObject from JSON string
+sender.send(pushRegistrationObject,"Adopt a street dog today!", options);
+```
+<style>
+table{
+    width: 100%;
+}
+</style>
 
-Here, the `pushRegistrationObject` is the object sent from the client that was stored on the server.
+## Options:
+The options object can be used to customize the behaviour of the push notification. These can be sent from the server as per-message basis or can be set in the service worker binding as default. Settings sent from server will always get precedence over default settings.
+
+| property | Data Type | description |
+|----------|-----------|-------------|
+|body| String|Text to show in the notification body| 
+|badge|String|URL of an image to be used as badge, mostly in mobile devices|
+|dir|String|Useful if you want to determine the text direction, default is `auto`. It can be set to `ltr`, or `rtl`|
+|icon|String|URL of an image to be used as the icon of the notification|
+|image|String|URL of an image to be showin in the notification body (for notification with image content)|
+|lang|String|A [BCP47](https://tools.ietf.org/html/bcp47) Language code for the notification language|
+|renotify|Boolean|Used with the `tag` property, if set to will renotify for all the notificatio on the same tag|
+|requireInteraction|Boolean|Determine if the notification REQUIRES user to interact before it disappears, use it responsibly|
+|silent|Boolean|When set to true, notifications will not play notification sound or vibrate|
+|tag|String|Useful when you want to group notification on the same topic. e.g: chat from the same person, just set a common tag|
+|timestamp|Number|Determines when the notification is created, useful for figuring out how long it took to deliver|
+|vibrate|Array of Number|Determines a vibration pattern to use, each number represents milleseconds of vibration|
+
+A more detailed documentation on the options are here: <https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification>
 
 ### Setting up the service worker
 The last piece of puzzle is to set up a service worker. Now if you are using a boilerplate/generator there's a chance that you already have a service worker. A service worker is a JavaScript file that gets loaded in the client in such a way, that it can still remain active even after you've left the web application. That's why Service workers can receive push notifications. In the client setup section we used a service worker file called `sw.js`, the URL should be accessible from the browser and have to be on the same domain (for security reasons). 
 
-If you don't have a service worker, create one, if you have one, open it, and import the piece of code required to initiate the service Worker. You can either use it from CDN, or copy the code there. To use the CDN, paste this in the beginning of your service worker: 
+If you don't have a service worker, create one, if you have one, open it, and import the piece of code required to initiate the service Worker. You can either use it from CDN, or download the `worker/binding.js` file from the repository and import it. 
 ```js
-importScripts("https://unpkg.com/pushkit@2.0.8/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@3.0.0/worker/binding.js"); 
 ```
-##### *Or* paste the below code in the service worker: 
+Either way, you'll end up with the same result. This will expose a function called `attachPushKit`: 
 ```js
-function attachPushKit(scope,config,verbose){
-    var title   = config.title || "PushKit";
-    var icon    = config.icon  || "";
-    var badge   = config.badge || "";
-    scope.addEventListener("push", function(event) {
-        if(verbose) console.log("Push notification received");
-        const options = {
-          body  : event.data.text(),
-          icon  : icon,
-          badge : badge
-        };
-        event.waitUntil(scope.registration.showNotification(title, options));
-      });
-    if(config.url){
-      scope.addEventListener('notificationclick', function(event) {
-        event.notification.close();
-        event.waitUntil(
-            clients.matchAll({ includeUncontrolled: true, type: 'window' }).then( windowClients => {
-                for (var i = 0; i < windowClients.length; i++) {
-                    var client = windowClients[i];
-                    if (client.url === config.url && 'focus' in client) {
-                        return client.focus();
-                    }
-                }
-                if (clients.openWindow) {
-                    return clients.openWindow(config.url);
-                }
-            })
-        );
-      });
-    }  
-}
+attachPushKit(self,pushOptions, [defaultTitle = "", defaultURL = "", verbose = false]);
 ```
-Either way, you'll end up with the same result. Then add this line anywhere in the worker:
+Sample Use: 
+
 ```js
 var pushOptions = {
-    title : "My Awesome APP",
     icon  : "ICON_URL",
-    badge : "BADGE_URL",
-    url   : "YOUR_APP_URL"
+    badge : "BADGE_URL"
 }
 attachPushKit(self, pushOptions);
 ```
-This should be enough to enable web push notification in your application.
+The `PushOptions` object can have any properties from the [Options](#options) object mentioned above.If the same properties are also sent from the server, server values will get precedence. You can read the full documentation of the available options here: <https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification>
+
+> Make sure your application is served from a secure origin `https`. otherwise this will never work.
 
 **** 
 This tool is released under the MIT License. Feel free to contribute.

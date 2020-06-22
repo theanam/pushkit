@@ -13,6 +13,22 @@ interface PushKitSender {
   webPush: typeof import('web-push');
   send(
     subscription: PushSubscription,
-    message: string | Buffer
+    title: String,
+    options?: PushOption
   ): Promise<WebPush.SendResult>;
+}
+
+interface PushOption{
+  body?: String,
+  data?: Any,
+  badge?: String,
+  icon?: String,
+  image?: String,
+  lang?: String,
+  renotify?: Boolean,
+  requireInteraction?: Boolean,
+  silent?: Boolean,
+  tag?: String,
+  timestamp?: Number,
+  vibrate?:[Number]
 }
