@@ -32,7 +32,7 @@ function requestPushSubscription(reg,key){
 /**
  * @type {import('./index')}
  */
-export default function PushKit(publicKey, verbose = false){
+function PushKit(publicKey, verbose = false){
 	if(!publicKey || typeof publicKey !== "string") throw new Error("Public key must be a valid VAPT key");
 	this.supported  = true;
 	this.subscribed = false;
@@ -65,3 +65,5 @@ export default function PushKit(publicKey, verbose = false){
 		})
 	}
 }
+
+export {PushKit}

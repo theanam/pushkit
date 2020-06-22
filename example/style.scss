@@ -1,0 +1,119 @@
+$red: #e74c3c;
+$offwhite: #bdc3c7;
+$shadow: #95a5a6;
+
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    font-family: sans-serif;
+}
+
+html,body,.container{
+    height: 100%;
+}
+@keyframes loader{
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(360deg);
+    }
+}
+.hidden{
+    display: none !important;
+}
+.container{
+    background: $offwhite;
+    background-image: radial-gradient(circle at center, #fff, $offwhite);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+.pklogo{
+    height: 60px;
+    margin-bottom: 1em;
+}
+.loader{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 90vw;
+    .loaderinner{
+        width: 30px;
+        height: 30px;
+        border: 2px solid $red;
+        border-radius: 50%;
+        border-right: 2px solid $offwhite;
+        margin-bottom: 1em;
+        animation: loader 0.7s infinite linear;
+    }
+    .msg{
+        text-align: center;
+        line-height: 1.4;
+    }
+}
+.main{
+    max-width: 90vw;
+    min-width: 60vw;
+    background-color: white;
+    box-shadow: 1px 1px 4px 0px $shadow;
+    border-radius: 2px;
+    padding: 10px;
+    transition: transform 0.5s ease-out;
+    .message{
+        padding: 0.5em;
+        font-size: 1.1em;
+        color: white;
+        text-align: center;
+    }
+}
+
+.controls{
+    display:flex;
+    flex-direction: column;
+    align-items: stretch;
+    .regobj{
+        padding: 0.8em;
+        border-radius: 2px;
+        border: 1px solid #ccc;
+        font-family: monospace;
+        height: 17ch;
+        margin-top: 10px;
+        &:focus,&:active{
+            outline: none;
+        }
+    }
+    .copy{
+        padding: 0.6em;
+        text-align: center;
+        margin: 0.5em 0em;
+        background-color: $red;
+        border-radius: 2px;
+        color: white;
+        box-shadow: 1px 1px 3px 0px #ccc;
+        cursor: pointer;
+        &:hover{
+            box-shadow: 1px 1px 6px 0px #ccc;
+        }
+    }
+    .info{
+        color: white;
+        padding: 1em;
+        font-size: 12px;
+        border-radius: 3px;
+        text-align: justify;
+        background-color: rgba(0,0,0,0.8);
+        text-align: center;
+    }
+    .golink{
+        padding: 1.5em 0em 1em 0em;
+        text-align: center;
+        line-height: 1.3;
+    }
+    a,a:hover,a:link,a:visited{
+        color: inherit;
+    }
+}

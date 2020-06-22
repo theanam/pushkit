@@ -1,6 +1,10 @@
 # A complete toolkit for setting up independent Web Push notification.
 
-Everything you need to enable [Web Push notification](https://developer.mozilla.org/en-US/docs/Web/API/Push_API) in your Node.JS web application or Progressive web application, without any third-party service.
+Everything you need to enable Web Push Notification in your Node.JS web application or Progressive web application, without any third-party service. 
+
+## 🌍[Check the client example](https://theanam.github.io/pushkit)
+
+## 🚀[Check the server example](https://pushkit.herokuapp.com/)
 
 ## Installation
 This package contains both the client and server tools packaged in their own module loading format. To install the package run this:
@@ -16,7 +20,7 @@ Once you have your VAPID key pair (Public and Private key), you can use them to 
 Once you have installed the package, you can use it like this: 
 
 ```js
-import PushKit from "pushkit/client";
+import {PushKit} from "pushkit/client";
 // create an instance
 let pkInstance = new PushKit("PUBLIC_VAPID_KEY", true);
 // register service worker
@@ -52,6 +56,15 @@ this also returns a promise that resolves either with a `null` if the user denie
 
 The registration object is different for every user and every browser. You have to send this registration object to the server and store it there for that user. In the example, `fetch` was used to do it. This registration object will be used to send push notification to that user.
 
+#### Using from a CDN:
+*If you are not using a module bundler, or you'd like to use a CDN for the frontend part instead, you can manually add the script tag in your HTML file like this:*
+
+```html
+<script src="https://unpkg.com/pushkit@2.0.8/client/dist/index.js"></script>
+```
+> If you chose to include the JavaScript file in your HTML, instead of calling `new PushKit()` you have to call `new pushKit.PushKit()`. Every other frontend API are the same.
+
+
 ### Server Setup
 To set up the server, install the `pushkit` package on the server as well and then it can be imported like this:
 
@@ -68,6 +81,7 @@ Now when you need to send Push notification, Just use the `send` method of the
 `sender` like this:
 
 ```js
+// Make sure the parse the pushRegistrationObject from JSON string
 sender.send(pushRegistrationObject,"hello world. this is a push message");
 ```
 
@@ -78,7 +92,7 @@ The last piece of puzzle is to set up a service worker. Now if you are using a b
 
 If you don't have a service worker, create one, if you have one, open it, and import the piece of code required to initiate the service Worker. You can either use it from CDN, or copy the code there. To use the CDN, paste this in the beginning of your service worker: 
 ```js
-importScripts("https://unpkg.com/pushkit@1.1.2/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@2.0.8/worker/binding.js"); 
 ```
 ##### *Or* paste the below code in the service worker: 
 ```js
@@ -95,6 +109,24 @@ function attachPushKit(scope,config,verbose){
         };
         event.waitUntil(scope.registration.showNotification(title, options));
       });
+    if(config.url){
+      scope.addEventListener('notificationclick', function(event) {
+        event.notification.close();
+        event.waitUntil(
+            clients.matchAll({ includeUncontrolled: true, type: 'window' }).then( windowClients => {
+                for (var i = 0; i < windowClients.length; i++) {
+                    var client = windowClients[i];
+                    if (client.url === config.url && 'focus' in client) {
+                        return client.focus();
+                    }
+                }
+                if (clients.openWindow) {
+                    return clients.openWindow(config.url);
+                }
+            })
+        );
+      });
+    }  
 }
 ```
 Either way, you'll end up with the same result. Then add this line anywhere in the worker:
@@ -102,7 +134,8 @@ Either way, you'll end up with the same result. Then add this line anywhere in t
 var pushOptions = {
     title : "My Awesome APP",
     icon  : "ICON_URL",
-    badge : "BADGE_URL"
+    badge : "BADGE_URL",
+    url   : "YOUR_APP_URL"
 }
 attachPushKit(self, pushOptions);
 ```
