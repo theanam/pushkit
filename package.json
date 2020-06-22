@@ -1,6 +1,6 @@
 {
   "name": "pushkit",
-  "version": "2.0.8",
+  "version": "3.0.0",
   "keywords": [
     "push",
     "notification",
@@ -17,6 +17,7 @@
     "url": "git@github.com:theanam/pushkit.git"
   },
   "main": "server/index.js",
+  "types": "server/setver.d.ts",
   "license": "MIT",
   "dependencies": {
     "web-push": "^3.4.4"

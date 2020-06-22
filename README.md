@@ -1,22 +1,23 @@
 # A complete toolkit for setting up independent Web Push notification.
 
-Everything you need to enable Web Push Notification in your Node.JS web application or Progressive web application, without any third-party service. 
+Everything you need to enable Web Push Notification in your Node.JS web application or Progressive web application, without any third-party service (except for the browser's own channels). 
 
 ## 🌍[Check the client example](https://theanam.github.io/pushkit)
 
 ## 🚀[Check the server example](https://pushkit.herokuapp.com/)
+
+## Generate your VAPID keys first: 
+Before starting the setup, you need to create own own VAPID key pair. This is extremely easy to do. You can go to [this site](https://web-push-codelab.glitch.me/) and generate them online. Or you can generate them from Command line using [this tool](https://www.npmjs.com/package/web-push)
+
+Once you have your VAPID key pair (Public and Private key), you can use them to setup your web push implementation. 
 
 ## Installation
 This package contains both the client and server tools packaged in their own module loading format. To install the package run this:
 ```shell
 yarn add pushkit
 ```
-### Generate your VAPID keys first: 
-Before starting the setup, you need to create own own VAPID key pair. This is extremely easy to do. You can go to [this site](https://web-push-codelab.glitch.me/) and generate them online. Or you can generate them from Command line using [this tool](https://www.npmjs.com/package/web-push)
 
-Once you have your VAPID key pair (Public and Private key), you can use them to setup your web push implementation. 
-
-### Client Setup: 
+## Client Setup: 
 Once you have installed the package, you can use it like this: 
 
 ```js
@@ -54,9 +55,9 @@ pushKitInstance.handleRegistration(ServiceWorkerRegistration)
 ```
 this also returns a promise that resolves either with a `null` if the user denies, or push is not supported or there's any error. Or the push registration.
 
-The registration object is different for every user and every browser. You have to send this registration object to the server and store it there for that user. In the example, `fetch` was used to do it. This registration object will be used to send push notification to that user.
+The registration object is **different for every user and every browser**. You have to send this registration object to the server and store it there for that user. In the example, `fetch` was used to do it. This registration object will be used to send push notification to that user. [See this section](#sending-push-notification-sender.send)
 
-#### Using from a CDN:
+### Using from a CDN:
 *If you are not using a module bundler, or you'd like to use a CDN for the frontend part instead, you can manually add the script tag in your HTML file like this:*
 
 ```html
@@ -64,8 +65,7 @@ The registration object is different for every user and every browser. You have 
 ```
 > If you chose to include the JavaScript file in your HTML, instead of calling `new PushKit()` you have to call `new pushKit.PushKit()`. Every other frontend API are the same.
 
-
-### Server Setup
+## Server Setup
 To set up the server, install the `pushkit` package on the server as well and then it can be imported like this:
 
 ```js
@@ -76,17 +76,17 @@ let sender     = createSender({
 },"your@email.address");
 ```
 The Email Address is requred for web push API. Once instance of sender is enough for one set of vapid key (one application).
-### Sending Push Notification `sender.send`:
+### Sending Push Notification from server `sender.send`:
  ```js
- sender.send(pushRegistrationObject, title, [options]);
+ sender.send(pushRegistrationObject, title, [config]);
 ```
 ```js
-let options = {
+let config = {
     body: "Street dogs don't want anything more than love and shelter."
 }
 // Here, the `pushRegistrationObject` is the object sent from the client that was stored on the server.
 // Make sure to parse the pushRegistrationObject from JSON string
-sender.send(pushRegistrationObject,"Adopt a street dog today!", options);
+sender.send(pushRegistrationObject,"Adopt a street dog today!", config);
 ```
 <style>
 table{
@@ -94,8 +94,8 @@ table{
 }
 </style>
 
-## Options:
-The options object can be used to customize the behaviour of the push notification. These can be sent from the server as per-message basis or can be set in the service worker binding as default. Settings sent from server will always get precedence over default settings.
+## Configuring Push Behavior:
+The `config` object can be used to customize the behaviour of the push notification. These can be sent from the server as per-message basis or can be set in the service worker binding as default. Settings sent from server will always get precedence over default settings.
 
 | property | Data Type | description |
 |----------|-----------|-------------|
@@ -110,33 +110,49 @@ The options object can be used to customize the behaviour of the push notificati
 |silent|Boolean|When set to true, notifications will not play notification sound or vibrate|
 |tag|String|Useful when you want to group notification on the same topic. e.g: chat from the same person, just set a common tag|
 |timestamp|Number|Determines when the notification is created, useful for figuring out how long it took to deliver|
-|vibrate|Array of Number|Determines a vibration pattern to use, each number represents milleseconds of vibration|
+|vibrate|Array of Number|Determines a vibration pattern to use, each number represents milleseconds of vibration e.g: [200,100,100]|
 
-A more detailed documentation on the options are here: <https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification>
+A more detailed documentation on the config options are here: <https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification>
 
-### Setting up the service worker
+## Setting up the service worker
 The last piece of puzzle is to set up a service worker. Now if you are using a boilerplate/generator there's a chance that you already have a service worker. A service worker is a JavaScript file that gets loaded in the client in such a way, that it can still remain active even after you've left the web application. That's why Service workers can receive push notifications. In the client setup section we used a service worker file called `sw.js`, the URL should be accessible from the browser and have to be on the same domain (for security reasons). 
 
 If you don't have a service worker, create one, if you have one, open it, and import the piece of code required to initiate the service Worker. You can either use it from CDN, or download the `worker/binding.js` file from the repository and import it. 
 ```js
 importScripts("https://unpkg.com/pushkit@3.0.0/worker/binding.js"); 
 ```
-Either way, you'll end up with the same result. This will expose a function called `attachPushKit`: 
+Then you can attach the pushkit listeners with your service worker like this:
 ```js
-attachPushKit(self,pushOptions, [defaultTitle = "", defaultURL = "", verbose = false]);
+attachPushKit(self, pushConfig, [defaultTitle = "", defaultURL = "", verbose = false]);
 ```
 Sample Use: 
 
 ```js
-var pushOptions = {
+var pushConfig = {
     icon  : "ICON_URL",
     badge : "BADGE_URL"
 }
-attachPushKit(self, pushOptions);
+attachPushKit(self, pushConfig);
 ```
-The `PushOptions` object can have any properties from the [Options](#options) object mentioned above.If the same properties are also sent from the server, server values will get precedence. You can read the full documentation of the available options here: <https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification>
+The `PushConfig` object can have any properties from the [Configuring Push Behavior](#configuring-push-behavior)  section above.If the same properties are also sent from the server, server values will get precedence. You can read the full documentation of the available config options here: <https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification>
 
-> Make sure your application is served from a secure origin `https`. otherwise this will never work.
+## Using a different backend:
+
+If your backend is written in a different language, and you want to use Pushkit in the frontend only. You can definitely do that. Pushkit only knows `JSON` push data. You have to send *JSON string* as push data in the following format: 
+
+```json
+{
+    "title"   : "Push Notification Title",
+    "url"     : "https://where-to-go",
+    "config"  : {
+        "body": "Push notification body"
+    }
+}
+```
+This config here can have any value from [here](#configuring-push-behavior), Pushkit will be able to parse this and work without any issues.
+
+
+> One more thing, Make sure your application is served from a secure origin `https`. otherwise push notification will not work.
 
 **** 
 This tool is released under the MIT License. Feel free to contribute.

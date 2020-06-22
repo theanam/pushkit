@@ -7,10 +7,10 @@ const webPush  = require("web-push");
 module.exports = function createSender({publicKey,privateKey},email){
     webPush.setVapidDetails(`mailto:${email}`, publicKey, privateKey);
     let sender  = {webPush}
-    sender.send = function(subscription, title = "PusKit", options = {}){
+    sender.send = function(subscription, title = "PusKit", config = {}){
         let message = {
             title,
-            options
+            config
         }
         return webPush.sendNotification(subscription, JSON.stringify(message));
     }

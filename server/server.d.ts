@@ -14,11 +14,11 @@ interface PushKitSender {
   send(
     subscription: PushSubscription,
     title: String,
-    options?: PushOption
+    config?: PushConfig
   ): Promise<WebPush.SendResult>;
 }
 
-interface PushOption{
+interface PushConfig{
   body?: String,
   data?: Any,
   badge?: String,
