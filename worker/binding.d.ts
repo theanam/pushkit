@@ -12,4 +12,5 @@ interface WorkerConfig {
   title?: String;
   icon?: String;
   badge?: String;
+  url?: String;
 }

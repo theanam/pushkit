@@ -11,7 +11,7 @@ interface PushKitClientInstance {
   ): Promise<PushSubscription | null>;
 }
 
-export = PushKit;
+export = {PushKit};
 
 declare function PushKit(
   publickKey: string,

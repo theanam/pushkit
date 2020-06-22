@@ -15,4 +15,22 @@ function attachPushKit(scope,config,verbose){
         };
         event.waitUntil(scope.registration.showNotification(title, options));
       });
+    if(config.url){
+      scope.addEventListener('notificationclick', function(event) {
+        event.notification.close();
+        event.waitUntil(
+            clients.matchAll({ includeUncontrolled: true, type: 'window' }).then( windowClients => {
+                for (var i = 0; i < windowClients.length; i++) {
+                    var client = windowClients[i];
+                    if (client.url.match(config.url) && 'focus' in client) {
+                        return client.focus();
+                    }
+                }
+                if (clients.openWindow) {
+                    return clients.openWindow(config.url);
+                }
+            })
+        );
+      });
+    }  
 }
