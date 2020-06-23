@@ -4,12 +4,16 @@ Everything you need to enable Web Push Notification in your Node.JS web applicat
 
 ## 🌍[Check the client example](https://theanam.github.io/pushkit)
 
-## 🚀[Check the server example](https://pushkit.herokuapp.com/)
+## 🚀[Check the server example and tester](https://pushkit.herokuapp.com/)
 
 ## Generate your VAPID keys first: 
-Before starting the setup, you need to create own own VAPID key pair. This is extremely easy to do. You can go to [this site](https://web-push-codelab.glitch.me/) and generate them online. Or you can generate them from Command line using [this tool](https://www.npmjs.com/package/web-push)
+Before starting the setup, you need to create own own VAPID key pair. This is extremely easy. There are many ways to do it:
 
-Once you have your VAPID key pair (Public and Private key), you can use them to setup your web push implementation. 
+1. Generate it from [Pushkit Server example and Tester](https://pushkit.herokuapp.com/)
+2. Generate online from [this site](https://web-push-codelab.glitch.me/)
+3. Using this tool: [web-push](https://www.npmjs.com/package/web-push)
+
+Once you have your VAPID key pair (Public and Private key). You need to store them carefully. you have to use them to setup your web push implementation in server and client.
 
 ## Installation
 This package contains both the client and server tools packaged in their own module loading format. To install the package run this:
@@ -25,24 +29,34 @@ import {PushKit} from "pushkit/client";
 // create an instance
 let pkInstance = new PushKit("PUBLIC_VAPID_KEY", true);
 // register service worker
-navigator.serviceWorker.register("./sw.js").then(swreg=>{
-    // start push registration after service worker registration
-    pkInstance.handleRegistration(swreg).then(pushreg=>{
-        // Once push registration is done
-        // Send the registration data to the server
-        // You can implement this part in your convenient way
-        // The below example uses `fetch` API to do it.
-        let regData = JSON.stringify(pushreg);
-        fetch("/reg", {
-            method  : "POST",
-            body    : regData,
-            headers : {
-                "content-type":"application/json"
-            }
+function startPushReg(){
+    navigator.serviceWorker.register("./sw.js").then(swreg=>{
+        // start push registration after service worker registration
+        pkInstance.handleRegistration(swreg).then(pushreg=>{
+            // Once push registration is done
+            // Send the registration data to the server
+            // You can implement this part in your convenient way
+            // The below example uses `fetch` API to do it.
+            let regData = JSON.stringify(pushreg);
+            fetch("/reg", {
+                method  : "POST",
+                body    : regData,
+                headers : {
+                    "content-type":"application/json"
+                }
+            });
         });
-    })
+    });
+}
+// Run this after at least one user interaction.
+// e.g: a button click. Otherwise there's a chance that it will fail.
+document.querySelector(".subscribe").addEventListener("click", startPushReg);
+// You can hide this button using `pkInstance.granted` property. granted === already set up
+if(pkInstance.granted){
+    document.querySelector(".subscribe").style.display = "none";
+}
 ```
-The above code creates a `PushKit` Instance, The constructor takes two arguments, The first argument is required. The second argument is false by default, setting it true will generate console logs.
+The above code creates a `PushKit` Instance, The constructor takes two arguments, The first argument is required. The second argument is false by default, setting it true will generate logs in console.
 
 ```js
 let _pk = new PushKit("<PUBLIC_VAPID_KEY>", [verbose = false]);
@@ -57,11 +71,23 @@ this also returns a promise that resolves either with a `null` if the user denie
 
 The registration object is **different for every user and every browser**. You have to send this registration object to the server and store it there for that user. In the example, `fetch` was used to do it. This registration object will be used to send push notification to that user. [See this section](#sending-push-notification-sender.send)
 
+#### Pushkit Instance
+Once created, a PushKit instance has these following properties:
+
+|Property|Type|Description|
+|--------|----|-----------|
+|granted|Boolean|Determines if push permission is already granted. Can be used for hiding prompts|
+|handleRegistration|Function|Helper function to handle push registration|
+|reg|`serviceWorkerRegistration` Object|The PushRegistration object. Available after calling `handleRegistration`|
+|sub|`PushSubscription` Object| The pushSubscription object. Available after calling `handleRegistration`|
+|subscribed|Boolean|Determines if the user is subscribed. Available after calling `handleRegistration`|
+|supported|Boolean|Determines if push notification is supported by the browser|
+
 ### Using from a CDN:
 *If you are not using a module bundler, or you'd like to use a CDN for the frontend part instead, you can manually add the script tag in your HTML file like this:*
 
 ```html
-<script src="https://unpkg.com/pushkit@3.0.2/client/dist/index.js"></script>
+<script src="https://unpkg.com/pushkit@3.1.0/client/dist/index.js"></script>
 ```
 > If you chose to include the JavaScript file in your HTML, instead of calling `new PushKit()` you have to call `new pushKit.PushKit()`. Every other frontend API are the same.
 
@@ -88,11 +114,6 @@ let config = {
 // Make sure to parse the pushRegistrationObject from JSON string
 sender.send(pushRegistrationObject,"Adopt a street dog today!", config);
 ```
-<style>
-table{
-    width: 100%;
-}
-</style>
 
 ## Configuring Push Behavior:
 The `config` object can be used to customize the behaviour of the push notification. These can be sent from the server as per-message basis or can be set in the service worker binding as default. Settings sent from server will always get precedence over default settings.
@@ -119,7 +140,7 @@ The last piece of puzzle is to set up a service worker. Now if you are using a b
 
 If you don't have a service worker, create one, if you have one, open it, and import the piece of code required to initiate the service Worker. You can either use it from CDN, or download the `worker/binding.js` file from the repository and import it. 
 ```js
-importScripts("https://unpkg.com/pushkit@3.0.2/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@3.1.0/worker/binding.js"); 
 ```
 Then you can attach the pushkit listeners with your service worker like this:
 ```js
@@ -128,7 +149,7 @@ attachPushKit(self, pushConfig, [defaultTitle = "", defaultURL = "", verbose = f
 Sample Use in service worker: 
 
 ```js
-importScripts("https://unpkg.com/pushkit@3.0.2/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@3.1.0/worker/binding.js"); 
 var pushConfig = {
     icon  : "ICON_URL",
     badge : "BADGE_URL"

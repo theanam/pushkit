@@ -39,15 +39,18 @@ function PushKit(publicKey, verbose = false){
 	this.key        = publicKey;
 	this.reg        = null;
 	this.sub        = null;
+	this.granted    = false;
+	if(window.Notification && "permission" in window.Notification) this.granted = (window.Notification.permission === "granted");
 	if (!('serviceWorker' in navigator) || !('PushManager' in window)) this.supported = false;	
-	this.handleRegistration = (reg) =>{
-		if(!reg) throw new Error("Service worker registration object required as argument");
+	this._initRegistrationInternal = (swRegistration) =>{
+		if(!swRegistration) throw new Error("Service worker registration object required as argument");
 		return new Promise(resolve=>{
 			if(this.supported === false) return resolve(null);
-			this.reg = reg;
+			this.reg = swRegistration;
 			getSubStatus(this.reg).then(sub=>{
 				this.sub        = sub;
 				this.subscribed = true;
+				this.granted    = true;
 				if(verbose) _log("Already Push Subscribed");
 				return resolve(this.sub);
 			}).catch(e=>{
@@ -55,6 +58,7 @@ function PushKit(publicKey, verbose = false){
 				requestPushSubscription(this.reg,this.key).then(sub=>{
 					this.sub        = sub;
 					this.subscribed = true;
+					this.granted    = true;
 					if(verbose) _log("Freshly Push Subscribed");
 					return resolve(this.sub);
 				}).catch(e=>{
@@ -63,6 +67,28 @@ function PushKit(publicKey, verbose = false){
 				})
 			})
 		})
+	}
+	this.handleRegistration = (swRegistration, verbose = false)=>{
+		return new Promise(resolve=>{
+			if(window.Notification && "requestPermission" in window.Notification){
+				verbose && console.info("Using window.Notification API");
+				if(window.Notification.permission === "granted") return this._initRegistrationInternal(swRegistration, verbose).then(resolve);
+				window.Notification.requestPermission().then(permission=>{
+					if(permission === "granted") return this._initRegistrationInternal(swRegistration, verbose).then(resolve);
+					else{
+						verbose && console.error("Notification permission denied");
+						resolve(null);
+					}
+				})
+				.catch(e=>{
+					verbose && console.error("Failed to request notification permission", e);
+					return reject(null);
+				});
+			}
+			else{
+				return this._initRegistrationInternal(swRegistration, verbose).then(resolve);
+			}
+		});
 	}
 }
 

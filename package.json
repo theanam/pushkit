@@ -1,6 +1,6 @@
 {
   "name": "pushkit",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "keywords": [
     "push",
     "notification",
@@ -30,6 +30,7 @@
   },
   "scripts": {
     "build-client": "parcel build client/index.js -d client/dist --global pushKit",
+    "watch-client": "parcel watch client/index.js -d client/dist --global pushKit",
     "publish-page": "yarn build-example && npx gh-pages -d dist-example && rm -rf dist-example",
     "run-example": "mkdir -p temp-example && cp example/sw.js temp-example/ && parcel example/index.html -d temp-example",
     "build-example": "parcel build example/index.html -d dist-example --public-url /pushkit && cp example/sw.js dist-example && cp example/pushkit.png dist-example"

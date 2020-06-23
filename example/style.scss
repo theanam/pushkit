@@ -9,7 +9,13 @@ $shadow: #95a5a6;
     line-height: 1;
     font-family: sans-serif;
 }
-
+@mixin hoveraction{
+    cursor: pointer;
+    box-shadow: 1px 1px 4px 0px #444;
+    &:hover{
+        box-shadow: 1px 1px 7px 0px #444;
+    }
+}
 html,body,.container{
     height: 100%;
 }
@@ -93,11 +99,7 @@ html,body,.container{
         background-color: $red;
         border-radius: 2px;
         color: white;
-        box-shadow: 1px 1px 3px 0px #ccc;
-        cursor: pointer;
-        &:hover{
-            box-shadow: 1px 1px 6px 0px #ccc;
-        }
+        @include hoveraction;
     }
     .info{
         color: white;
@@ -129,9 +131,18 @@ html,body,.container{
         left: 20px;
         top: 20px;
         border-radius: 50%;
-        box-shadow: 1px 1px 4px 0px #444;
-        &:hover{
-            box-shadow: 1px 1px 7px 0px #444;
-        }
+        @include hoveraction;
+    }
+}
+
+.startbtn{
+    padding: 1.5em;
+    .start{
+        padding: 1em 2em;
+        background-color: $red;
+        color: #fff;
+        text-transform: uppercase;
+        border-radius: 3px;
+        @include hoveraction;
     }
 }
