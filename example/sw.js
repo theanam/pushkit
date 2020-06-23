@@ -1,4 +1,5 @@
-importScripts("https://unpkg.com/pushkit@3.1.3/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@3.1.4/worker/binding.js"); 
+// importScripts("binding.js"); 
 var pushConfig = {
     icon  : "https://theanam.github.io/pushkit/pushkit.png",
     badge : "https://theanam.github.io/pushkit/pushkit.png"

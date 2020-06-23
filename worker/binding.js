@@ -16,7 +16,7 @@ function mergeConfigs(c1, c2){
     }
     return final;
 }
-function handleNotificationClick(event) {
+function handleNotificationClick(event, last_url) {
     if(!last_url) return false;
     event.notification.close();
     event.waitUntil(
@@ -43,8 +43,10 @@ function attach(scope, config, defaultTitle, defaultURL, customClickHandler, ver
         last_url    = data.url || defaultURL || "";
         event.waitUntil(scope.registration.showNotification(title, _config));
     });
-    var handler = customClickHandler || handleNotificationClick;
-    scope.addEventListener('notificationclick', handler);
+    scope.addEventListener('notificationclick', function(event){
+        if(customClickHandler) customClickHandler(event);
+        else handleNotificationClick(event, last_url);
+    });
 }
 function _reject(err,verbose){
     verbose && console.log("Permission failed", err);
@@ -70,7 +72,7 @@ function attachPushKit(scope, config, defaultTitle, defaultURL,customClickHandle
             }
         }
         else{
-            return attach(scope, config, defaultTitle, defaultURL, verbose);
+            return attach(scope, config, defaultTitle, defaultURL, customClickHandler, verbose);
         }
     });
 }
