@@ -16,7 +16,24 @@ function mergeConfigs(c1, c2){
     }
     return final;
 }
-function attach(scope, config, defaultTitle, defaultURL, verbose){
+function handleNotificationClick(event) {
+    if(!last_url) return false;
+    event.notification.close();
+    event.waitUntil(
+        clients.matchAll({ includeUncontrolled: true, type: 'window' }).then( windowClients => {
+            for (var i = 0; i < windowClients.length; i++) {
+                var client = windowClients[i];
+                if (client.url.match(last_url) && 'focus' in client) {
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) {
+                return clients.openWindow(last_url);
+            }
+        })
+    );
+}
+function attach(scope, config, defaultTitle, defaultURL, customClickHandler, verbose){
     var last_url = defaultURL || "";
     scope.addEventListener("push", function(event) {
         if(verbose) console.log("Push notification received");
@@ -26,38 +43,29 @@ function attach(scope, config, defaultTitle, defaultURL, verbose){
         last_url    = data.url || defaultURL || "";
         event.waitUntil(scope.registration.showNotification(title, _config));
     });
-    scope.addEventListener('notificationclick', function(event) {
-        if(!last_url) return false;
-        event.notification.close();
-        event.waitUntil(
-            clients.matchAll({ includeUncontrolled: true, type: 'window' }).then( windowClients => {
-                for (var i = 0; i < windowClients.length; i++) {
-                    var client = windowClients[i];
-                    if (client.url.match(last_url) && 'focus' in client) {
-                        return client.focus();
-                    }
-                }
-                if (clients.openWindow) {
-                    return clients.openWindow(last_url);
-                }
-            })
-        );
-    });
+    var handler = customClickHandler || handleNotificationClick;
+    scope.addEventListener('notificationclick', handler);
 }
-
+function _handle(permission, verbose){
+    if(permission === "granted") return attach(scope, config, defaultTitle, defaultURL, verbose);
+    verbose && console.log("Permission failed", err);
+}
+function _reject(err,verbose){
+    verbose && console.log("Permission failed", err);
+}
 function attachPushKit(scope, config, defaultTitle, defaultURL, verbose){
     scope.addEventListener("activate",()=>{
         if(Notification && "requestPermission" in Notification){
             // Suggested by: @fa7ad(https://github.com/fa7ad) for some older browser
             verbose && console.log("Requesting Notification permission");
-            Notification.requestPermission().then(function(permission){
-                if(permission === "granted"){
-                    return attach(scope, config, defaultTitle, defaultURL, verbose);
-                }
-                verbose && console.error("Push permission request denied");
-            }).catch(function(e){
-                verbose && console.error("Push permission request failed");
-            });
+            try{
+                verbose && console.log("Trying to use the promise based API");
+                Notification.requestPermission().then(function(_p){_handle(_p,verbose)}).catch(function(e){_reject(e, verbose)});
+            }
+            catch(e){
+                verbose && console.log("Trying to use the callback based API");
+                Notification.requestPermission(function(_p){_handle(_p,verbose)});
+            }
         }
         else{
             return attach(scope, config, defaultTitle, defaultURL, verbose);

@@ -41,3 +41,6 @@ $(".start").addEventListener("click",()=>{
 window.onload = function(){
     if(_pk.granted) register();
 }
+$(".regobj").addEventListener("focus",()=>{
+    $(".regobj").setSelectionRange(0,$(".regobj").value.length);
+})

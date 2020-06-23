@@ -12,21 +12,31 @@ function toUint8Array(base64String) {
 }
 function getSubStatus(reg){
 	return new Promise((resolve,reject)=>{
+		try{
 		reg.pushManager.getSubscription()
 			.then(sub=>{
 				if(sub === null) return reject(null);
 				else return resolve(sub);
 			})
 			.catch(reject);	
+		}
+		catch(e){
+			reject(null);
+		}
 	})
 }
 function requestPushSubscription(reg,key){ 
 	return new Promise((resolve,reject)=>{
 		let applicationServerKey = toUint8Array(key);
-		reg.pushManager.subscribe({
-			userVisibleOnly: true,
-			applicationServerKey
-		}).then(resolve).catch(reject);
+		try{
+			reg.pushManager.subscribe({
+				userVisibleOnly: true,
+				applicationServerKey
+			}).then(resolve).catch(reject);
+		}
+		catch(e){
+			reject(e);
+		}
 	})
 }
 /**
@@ -73,17 +83,23 @@ function PushKit(publicKey, verbose = false){
 			if(window.Notification && "requestPermission" in window.Notification){
 				verbose && console.info("Using window.Notification API");
 				if(window.Notification.permission === "granted") return this._initRegistrationInternal(swRegistration, verbose).then(resolve);
-				window.Notification.requestPermission().then(permission=>{
+				const _handle = permission => {
 					if(permission === "granted") return this._initRegistrationInternal(swRegistration, verbose).then(resolve);
 					else{
 						verbose && console.error("Notification permission denied");
 						resolve(null);
 					}
-				})
-				.catch(e=>{
-					verbose && console.error("Failed to request notification permission", e);
+				}
+				const _catch = err => {
+					verbose && console.error("Failed to request notification permission", err);
 					return reject(null);
-				});
+				}
+				try{
+					window.Notification.requestPermission().then(_handle).catch(_catch);
+				}
+				catch(e){
+					return window.Notification.requestPermission(_handle);
+				}
 			}
 			else{
 				return this._initRegistrationInternal(swRegistration, verbose).then(resolve);

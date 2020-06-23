@@ -2,9 +2,9 @@
 
 Everything you need to enable Web Push Notification in your Node.JS web application. Uses the browser's delivery channel to send push notification(Free of cost), which means no extra third-party service (except for the browser's own delivery channel). Works with Progressive Web Apps (PWA). 
 
-## 🌍[Check the client example](https://theanam.github.io/pushkit)
+## 🌍 [Check the client example](https://theanam.github.io/pushkit)
 
-## 🚀[Check the server example and tester](https://pushkit.herokuapp.com/)
+## 🚀 [Check the server example and tester](https://pushkit.herokuapp.com/)
 
 ## Generate your VAPID keys first: 
 Before starting the setup, you need to create own own VAPID key pair. This is extremely easy. There are many ways to do it:
@@ -76,18 +76,18 @@ Once created, a PushKit instance has these following properties:
 
 |Property|Type|Description|
 |--------|----|-----------|
-|granted|Boolean|Determines if push permission is already granted. Can be used for hiding prompts|
+|granted|Boolean|Determines if push permission is already granted.<br> Can be used for hiding prompts|
 |handleRegistration|Function|Helper function to handle push registration|
-|reg|`serviceWorkerRegistration` Object|The PushRegistration object. Available after calling `handleRegistration`|
-|sub|`PushSubscription` Object| The pushSubscription object. Available after calling `handleRegistration`|
-|subscribed|Boolean|Determines if the user is subscribed. Available after calling `handleRegistration`|
+|reg|`serviceWorkerRegistration` Object|The PushRegistration object.<br> Available after calling `handleRegistration`|
+|sub|`PushSubscription` Object| The pushSubscription object.<br> Available after calling `handleRegistration`|
+|subscribed|Boolean|Determines if the user is subscribed.<br> Available after calling `handleRegistration`|
 |supported|Boolean|Determines if push notification is supported by the browser|
 
 ### Using from a CDN:
 *If you are not using a module bundler, or you'd like to use a CDN for the frontend part instead, you can manually add the script tag in your HTML file like this:*
 
 ```html
-<script src="https://unpkg.com/pushkit@3.1.0/client/dist/index.js"></script>
+<script src="https://unpkg.com/pushkit@3.1.1/client/dist/index.js"></script>
 ```
 > If you chose to include the JavaScript file in your HTML, instead of calling `new PushKit()` you have to call `new pushKit.PushKit()`. Every other frontend API are the same.
 
@@ -121,17 +121,17 @@ The `config` object can be used to customize the behaviour of the push notificat
 | property | Data Type | description |
 |----------|-----------|-------------|
 |body| String|Text to show in the notification body| 
-|badge|String|URL of an image to be used as badge, mostly in mobile devices|
-|dir|String|Useful if you want to determine the text direction, default is `auto`. It can be set to `ltr`, or `rtl`|
-|icon|String|URL of an image to be used as the icon of the notification|
-|image|String|URL of an image to be showin in the notification body (for notification with image content)|
-|lang|String|A [BCP47](https://tools.ietf.org/html/bcp47) Language code for the notification language|
-|renotify|Boolean|Used with the `tag` property, if set to will renotify for all the notificatio on the same tag|
-|requireInteraction|Boolean|Determine if the notification REQUIRES user to interact before it disappears, use it responsibly|
-|silent|Boolean|When set to true, notifications will not play notification sound or vibrate|
-|tag|String|Useful when you want to group notification on the same topic. e.g: chat from the same person, just set a common tag|
-|timestamp|Number|Determines when the notification is created, useful for figuring out how long it took to deliver|
-|vibrate|Array of Number|Determines a vibration pattern to use, each number represents milleseconds of vibration e.g: [200,100,100]|
+|badge|String|URL of an image to be used as badge,<br> mostly in mobile devices|
+|dir|String|Useful if you want to determine the text direction,<br> default is `auto`. <br>It can be set to `ltr`, or `rtl`|
+|icon|String|URL of an image to be used as the <br> icon of the notification|
+|image|String|URL of an image to be showin in the<br> notification body (for notification with image content)|
+|lang|String|A [BCP47](https://tools.ietf.org/html/bcp47) Language code<br> for the notification language|
+|renotify|Boolean|Used with the `tag` property,<br> if set to will renotify for all the notificatio on the same tag|
+|requireInteraction|Boolean|Determine if the notification REQUIRES user<br> to interact before it disappears, use it responsibly|
+|silent|Boolean|When set to true, notifications will<br> not play notification sound or vibrate|
+|tag|String|Useful when you want to group notification<br> on the same topic. e.g: chat from the<br> same person, just set a common tag|
+|timestamp|Number|Determines when the notification is created,<br> useful for figuring out how long it took to deliver|
+|vibrate|Array of Number|Determines a vibration pattern to use,<br> each number represents milleseconds of vibration e.g: [200,100,100]|
 
 A more detailed documentation on the config options are here: <https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification>
 
@@ -140,16 +140,25 @@ The last piece of puzzle is to set up a service worker. Now if you are using a b
 
 If you don't have a service worker, create one, if you have one, open it, and import the piece of code required to initiate the service Worker. You can either use it from CDN, or download the `worker/binding.js` file from the repository and import it. 
 ```js
-importScripts("https://unpkg.com/pushkit@3.1.0/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@3.1.1/worker/binding.js"); 
 ```
 Then you can attach the pushkit listeners with your service worker like this:
 ```js
-attachPushKit(self, pushConfig, [defaultTitle = "", defaultURL = "", verbose = false]);
+attachPushKit(self, pushConfig, [defaultTitle = "", defaultURL = "",customClickHandler = null,  verbose = false]);
 ```
+|Argument|Required|Default|Description|
+|--------|--------|-------|-----------|
+|self|true|n/a|The service worker context<br>the value will always be `self`|
+|pushConfig|false|null|Default behavior of push messages. <br> See [Configuring Push behavior](#configuring-push-behavior) |
+|defaultTitle|false|""|Default Title for Push Messages|
+|defaultURL|false|""|Default URL to open or focus <br> when push message is clicked<br> this Will not work if the default click <br>handler is changed|
+|customClickHandler|false|null|If you want to change the default <br> click behavior of the push click event.<br> Takes a function and passes the `event` object.|
+|verbose|false|false|If set to true, console logs<br> will be generated|
+
 Sample Use in service worker: 
 
 ```js
-importScripts("https://unpkg.com/pushkit@3.1.0/worker/binding.js"); 
+importScripts("https://unpkg.com/pushkit@3.1.1/worker/binding.js"); 
 var pushConfig = {
     icon  : "ICON_URL",
     badge : "BADGE_URL"
