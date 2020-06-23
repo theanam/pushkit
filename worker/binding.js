@@ -37,10 +37,22 @@ function attach(scope, config, defaultTitle, defaultURL, customClickHandler, ver
     var last_url = defaultURL || "";
     scope.addEventListener("push", function(event) {
         if(verbose) console.log("Push notification received");
-        var data    = event.data.json();
+        var data    = null;
+        var is_json = false;
+        try{
+            data    = event.data.json();
+            is_json = true;
+            verbose && console.log("Received JSON Notification");
+        }
+        catch(e){
+            data    = event.data.text();
+            verbose && console.log("Received Text");
+        }
         var title   = data.title  || defaultTitle || "Pushkit";
-        var _config = mergeConfigs(config, data.config);
-        last_url    = data.url || defaultURL || "";
+        var _config = {}
+        if(is_json)  _config = mergeConfigs(config, data.config);
+        else _config = mergeConfigs(config,{ body: data });
+        last_url     = data.url || defaultURL || "";
         event.waitUntil(scope.registration.showNotification(title, _config));
     });
     scope.addEventListener('notificationclick', function(event){
