@@ -33,7 +33,7 @@ function handleNotificationClick(event, last_url) {
         })
     );
 }
-function attach(scope, config, defaultTitle, defaultURL, customClickHandler, verbose){
+function attachPushKit(scope, config, defaultTitle, defaultURL, customClickHandler, verbose){
     var last_url = defaultURL || "";
     scope.addEventListener("push", function(event) {
         if(verbose) console.log("Push notification received");
@@ -62,8 +62,4 @@ function attach(scope, config, defaultTitle, defaultURL, customClickHandler, ver
 }
 function _reject(err,verbose){
     verbose && console.log("Permission failed", err);
-}
-function attachPushKit(scope, config, defaultTitle, defaultURL,customClickHandler, verbose){
-    // kept scope for activate or other stuff
-    return attach(scope, config, defaultTitle, defaultURL, customClickHandler, verbose);
 }
